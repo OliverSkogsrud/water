@@ -1,0 +1,49 @@
+[gd_scene load_steps=10 format=3 uid="uid://co81i631t7yv1"]
+
+[ext_resource type="Shader" path="res://water.gdshader" id="1_scqd8"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_ii5pv"]
+subdivide_width = 512
+subdivide_depth = 512
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_yd1qc"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_28y8j"]
+seamless = true
+as_normal_map = true
+noise = SubResource("FastNoiseLite_yd1qc")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_l4l32"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_qohpw"]
+seamless = true
+as_normal_map = true
+noise = SubResource("FastNoiseLite_l4l32")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_8t0qj"]
+noise_type = 3
+frequency = 0.0074
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_mip0d"]
+seamless = true
+noise = SubResource("FastNoiseLite_8t0qj")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_cxc4o"]
+render_priority = 0
+shader = ExtResource("1_scqd8")
+shader_parameter/color = Color(0.278431, 0.866667, 1, 1)
+shader_parameter/wave_direction = Vector2(2, 0)
+shader_parameter/wave_direction2 = Vector2(0, 1)
+shader_parameter/noise_scale = 10.0
+shader_parameter/wave_speed = 0.05
+shader_parameter/height_scale = 0.15
+shader_parameter/noise = SubResource("NoiseTexture2D_28y8j")
+shader_parameter/noise1 = SubResource("NoiseTexture2D_qohpw")
+shader_parameter/wave = SubResource("NoiseTexture2D_mip0d")
+
+[node name="Node3D" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(5.55, 0, 0, 0, -2.42598e-07, 5.55, 0, -5.55, -2.42598e-07, 0, 0, 0)
+mesh = SubResource("QuadMesh_ii5pv")
+surface_material_override/0 = SubResource("ShaderMaterial_cxc4o")

@@ -1,0 +1,106 @@
+[gd_scene load_steps=16 format=3 uid="uid://817s4ais454q"]
+
+[ext_resource type="PackedScene" uid="uid://dr62a56bauu1d" path="res://water.tscn" id="1_sjmjq"]
+[ext_resource type="Shader" path="res://water.gdshader" id="2_pyoqq"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_d4ssc"]
+sky_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+ground_horizon_color = Color(0.64625, 0.65575, 0.67075, 1)
+
+[sub_resource type="Sky" id="Sky_v1btg"]
+sky_material = SubResource("ProceduralSkyMaterial_d4ssc")
+
+[sub_resource type="Environment" id="Environment_sjsjt"]
+background_mode = 2
+sky = SubResource("Sky_v1btg")
+tonemap_mode = 2
+sdfgi_use_occlusion = true
+glow_enabled = true
+volumetric_fog_density = 0.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_xdnbo"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_auba3"]
+albedo_color = Color(1, 0.588235, 0.00784314, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_bx8mi"]
+noise_type = 4
+seed = 3
+frequency = 0.0293
+fractal_type = 2
+domain_warp_fractal_octaves = 10
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_ni6go"]
+generate_mipmaps = false
+seamless = true
+seamless_blend_skirt = 0.05
+as_normal_map = true
+bump_strength = 13.2
+noise = SubResource("FastNoiseLite_bx8mi")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_0v5ix"]
+seed = 7
+frequency = 0.0063
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_tfbv7"]
+seamless = true
+as_normal_map = true
+bump_strength = 13.7
+noise = SubResource("FastNoiseLite_0v5ix")
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_m72q7"]
+noise_type = 3
+frequency = 0.0073
+fractal_type = 0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_x6w0g"]
+seamless = true
+noise = SubResource("FastNoiseLite_m72q7")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_vgppr"]
+render_priority = 0
+shader = ExtResource("2_pyoqq")
+shader_parameter/color = Color(0.0694655, 0.151724, 0.420107, 0)
+shader_parameter/wave_direction = Vector2(2, 0)
+shader_parameter/wave_direction2 = Vector2(0, 1)
+shader_parameter/depth_distance = 0.2
+shader_parameter/noise_scale = 10.0
+shader_parameter/alpha = 0.95
+shader_parameter/wave_speed = 0.1
+shader_parameter/height_scale = 0.03
+shader_parameter/thickness = 20.0
+shader_parameter/noise = SubResource("NoiseTexture2D_ni6go")
+shader_parameter/noise1 = SubResource("NoiseTexture2D_tfbv7")
+shader_parameter/wave = SubResource("NoiseTexture2D_x6w0g")
+
+[sub_resource type="SphereMesh" id="SphereMesh_tmun3"]
+
+[node name="Main" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sjsjt")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
+shadow_enabled = true
+
+[node name="CSGCombiner3D" type="CSGCombiner3D" parent="."]
+use_collision = true
+
+[node name="CSGMesh3D" type="CSGMesh3D" parent="CSGCombiner3D"]
+transform = Transform3D(8.03727, 0, 0, 0, 0.41864, 0, 0, 0, 10.4792, 0, 0.0322677, 0.505426)
+mesh = SubResource("BoxMesh_xdnbo")
+material = SubResource("StandardMaterial3D_auba3")
+
+[node name="CSGMesh3D2" type="CSGMesh3D" parent="CSGCombiner3D"]
+transform = Transform3D(101.765, 0, 0, 0, 0.41864, 0, 0, 0, 102.346, 8.16511, -2.25317, 0.522958)
+mesh = SubResource("BoxMesh_xdnbo")
+material = SubResource("StandardMaterial3D_auba3")
+
+[node name="Water" parent="." instance=ExtResource("1_sjmjq")]
+transform = Transform3D(133.296, 0, 0, 0, -4.37564e-06, 12.2974, 0, -100.103, -5.37536e-07, 0, -0.175373, 0)
+surface_material_override/0 = SubResource("ShaderMaterial_vgppr")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.234901, -8.31878)
+mesh = SubResource("SphereMesh_tmun3")
